@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nelson Bandos | Portfolio Réseaux & Systèmes</title>
+    <meta name="description" content="Portfolio de Nelson Bandos, futur ingénieur réseaux et systèmes. Projets, compétences et parcours.">
+    
+    <!-- Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome pour les icônes --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts --><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Variables CSS pour gérer les couleurs */
+        /* LIGHT MODE (Default) */
+        :root {
+            --bg-body: #f9fafb;     /* gray-50 */
+            --bg-secondary: #ffffff; /* white */
+            --text-primary: #1e293b; /* slate-800 */
+            --text-secondary: #475569; /* gray-600 */
+            --bg-card: #ffffff;
+            /* Le Hero est Slate 900 */
+            --bg-network: #0f172a; /* Slate 900 */
+        }
+
+        /* Dark Mode */
+        .dark {
+            --bg-body: #0f172a;      /* slate-900 */
+            --bg-secondary: #1e293b; /* slate-800 */
+            --text-primary: #f1f5f9; /* slate-100 */
+            --text-secondary: #94a3b8; /* slate-400 */
+            --bg-card: #1e293b;      /* slate-800 */
+            /* Le Hero est toujours Slate 900 (pour maintenir la cohérence visuelle) */
+            --bg-network: #0f172a;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+        }
+        .network-bg {
+            background-color: var(--bg-network);
+        }
+        /* Styles spécifiques aux composants en mode Light/Dark */
+        .card-bg {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+        }
+        
+        /* Bar de navigation stable et très sombre */
+        .nav-fixed-bg {
+            background-color: #030712; /* Gray 950 - Très foncé, presque noir */
+        }
+
+        /* Nous devons forcer le nom "N. Bandos" à être clair sur le fond noir de la navigation */
+        .nav-logo-text {
+            color: #f1f5f9; /* Slate 100 */
+        }
+
+        /* S'assurer que les liens de la nav sont bien en Vert Citron */
+        .nav-link-text {
+            color: #84cc16; /* Lime 500 */
+        }
+        .nav-link-text:hover {
+            color: #0ea5e9; /* Primary (Bleu Ciel) */
+        }
+    </style>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Active le dark mode basé sur la classe 'dark' sur l'élément <html>
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0ea5e9',   /* Sky Blue */
+                        secondary: '#0f172a', /* Slate 900 (sera inversé en dark mode) */
+                        accent: '#f59e0b',    /* Amber */
+                        lime: { // Ajout de la couleur lime (vert citron)
+                            500: '#84cc16'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation (Modification: Fond très sombre (Gray 950) pour les deux modes) -->
+    <nav class="fixed w-full z-50 nav-fixed-bg shadow-sm transition-all duration-300 border-b border-gray-100 dark:border-slate-800" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <i class="fa-solid fa-network-wired text-primary text-2xl"></i>
+                    <!-- MISE À JOUR : Nom complet -->
+                    <span class="font-bold text-xl tracking-tight nav-logo-text">Nelson Bandos</span>
+                </div>
+                
+                <!-- Desktop Menu --><div class="hidden md:flex space-x-8 items-center" id="desktop-nav-links">
+                    <!-- Liens forcés en Vert Citron -->
+                    <a href="#accueil" class="nav-link-text hover:text-primary transition font-medium">Accueil</a>
+                    <!-- NOUVEAU LIEN SERVICES -->
+                    <a href="#services" class="nav-link-text hover:text-primary transition font-medium">Services</a>
+                    <a href="#competences" class="nav-link-text hover:text-primary transition font-medium">Compétences</a>
+                    <a href="#projets" class="nav-link-text hover:text-primary transition font-medium">Projets</a>
+                    <a href="#parcours" class="nav-link-text hover:text-primary transition font-medium">Parcours</a>
+                    <a href="#contact" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition shadow-md">Me Contacter</a>
+                    
+                    <!-- NOUVEAU BOUTON : Toggle Dark Mode --><button id="theme-toggle" class="p-2 rounded-full text-gray-400 dark:text-yellow-400 hover:bg-slate-800 transition duration-300">
+                        <!-- L'icône sera changée par le JS --><i class="fa-solid fa-moon text-xl" id="theme-icon"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button --><div class="md:hidden flex items-center gap-2">
+                    <!-- Mobile Dark Mode Toggle --><button id="theme-toggle-mobile" class="p-2 rounded-full text-gray-400 dark:text-yellow-400 hover:bg-slate-800 transition duration-300">
+                        <i class="fa-solid fa-moon text-xl" id="theme-icon-mobile"></i>
+                    </button>
+                    <button id="mobile-menu-btn" class="text-gray-400 dark:text-slate-400 hover:text-primary focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu Panel (Mis à jour vers un fond sombre) --><div id="mobile-menu" class="hidden md:hidden nav-fixed-bg border-t border-gray-100 dark:border-slate-800">
+            <a href="#accueil" class="block py-2 px-4 nav-logo-text hover:bg-slate-800">Accueil</a>
+            <!-- NOUVEAU LIEN SERVICES -->
+            <a href="#services" class="block py-2 px-4 nav-logo-text hover:bg-slate-800">Services</a>
+            <a href="#competences" class="block py-2 px-4 nav-logo-text hover:bg-slate-800">Compétences</a>
+            <a href="#projets" class="block py-2 px-4 nav-logo-text hover:bg-slate-800">Projets</a>
+            <a href="#parcours" class="block py-2 px-4 nav-logo-text hover:bg-slate-800">Parcours</a>
+            <a href="#contact" class="block py-2 px-4 bg-primary text-white font-semibold hover:bg-sky-600">Me Contacter</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section --><section id="accueil" class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden network-bg text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center">
+                <!-- MODIFICATION: Affichage sur deux lignes et suppression des deux points --><div class="inline-flex flex-col items-center gap-1 px-3 py-2 rounded-full bg-slate-800 border border-slate-700 text-sky-400 text-sm font-medium mb-6">
+                    <div class="flex items-center gap-2">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+                        </span>
+                        <span>À la recherche d'opportunités</span>
+                    </div>
+                    <span class="text-xs text-slate-300/80">( Stage • CDD • CDI )</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-6">
+                    Bonjour, je suis <span class="text-primary">Nelson Bandos</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto font-light">
+                    Étudiant en fin de cycle spécialisé en <strong class="text-white">Réseaux & Télécoms</strong>. 
+                    Je conçois des architectures sécurisées et j'automatise les infrastructures IT.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <!-- BOUTON MIS À JOUR EN VERT CITRON (lime-500) --><a href="#projets" class="px-8 py-3 bg-lime-500 hover:bg-lime-600 text-slate-900 font-semibold rounded-lg shadow-lg shadow-lime-500/30 transition transform hover:-translate-y-1">
+                        Voir mes projets et compétences
+                    </a>
+                    <a href="#contact" class="px-8 py-3 bg-transparent border border-slate-500 text-slate-300 hover:bg-slate-800 hover:text-white font-semibold rounded-lg transition">
+                        Télécharger mon CV
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Animated Background Elements (Abstract Nodes) --><div class="absolute top-1/4 left-10 w-24 h-24 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div class="absolute top-1/3 right-10 w-24 h-24 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+    </section>
+
+    <!-- NOUVELLE SECTION: Services & Consultation (MISE À JOUR) -->
+    <section id="services" class="py-20 bg-slate-100 dark:bg-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">Offre de Services & Consultation</h2>
+                <div class="w-20 h-1 bg-accent mx-auto rounded"></div>
+                <p class="mt-4 text-gray-600 dark:text-slate-400">Expertise ponctuelle ou accompagnement périodique sur vos projets IT.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Service 1: Ingénierie & Architecture Réseau (Bleu) -->
+                <div class="card-bg p-6 rounded-3xl border-2 border-gray-200 dark:border-slate-700 shadow-md hover:shadow-lg transition ring-2 ring-primary/50 dark:ring-primary/50">
+                    <i class="fa-solid fa-code-branch text-4xl text-primary mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2 text-slate-800 dark:text-slate-100">Ingénierie & Architecture Réseau</h3>
+                    <ul class="space-y-2 text-gray-600 dark:text-slate-400 text-sm list-disc pl-5">
+                        <li>Conception de réseau informatique (topologies résilientes).</li>
+                        <li>Analyse et optimisation de l'infrastructure existante.</li>
+                        <li>Interconnexion des sites distants via VPN sécurisé / SD-WAN.</li>
+                    </ul>
+                </div>
+                
+                <!-- Service 2: Cybersécurité & Périmètre Défensif (Rouge) -->
+                <div class="card-bg p-6 rounded-3xl border-2 border-gray-200 dark:border-slate-700 shadow-md hover:shadow-lg transition ring-2 ring-red-300/50 dark:ring-red-500/50">
+                    <i class="fa-solid fa-lock text-4xl text-red-600 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2 text-slate-800 dark:text-slate-100">Cybersécurité & Périmètre Défensif</h3>
+                    <ul class="space-y-2 text-gray-600 dark:text-slate-400 text-sm list-disc pl-5">
+                        <li>Sécurisation du réseau (mécanisme IDS/IPS).</li>
+                        <li>Déploiement de pare-feu nouvelle génération.</li>
+                        <li>Formation des utilisateurs finaux (lutte contre les cybermenaces).</li>
+                    </ul>
+                </div>
+
+                <!-- Service 3: Communications Unifiées & Câblage (Vert) -->
+                <div class="card-bg p-6 rounded-3xl border-2 border-gray-200 dark:border-slate-700 shadow-md hover:shadow-lg transition ring-2 ring-green-300/50 dark:ring-green-500/50">
+                    <i class="fa-solid fa-headset text-4xl text-green-600 mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2 text-slate-800 dark:text-slate-100">Communications Unifiées & Câblage</h3>
+                    <ul class="space-y-2 text-gray-600 dark:text-slate-400 text-sm list-disc pl-5">
+                        <li>Mise en place de solution de téléphonie IP multisites ou sur LAN.</li>
+                        <li>Installation de système de surveillance vidéo.</li>
+                        <li>Câblage informatique (VDI, baies de serveurs).</li>
+                    </ul>
+                </div>
+                
+                <!-- Service 4: Audit, Conseil & Formation IT (Ambre) -->
+                <div class="card-bg p-6 rounded-3xl border-2 border-gray-200 dark:border-slate-700 shadow-md hover:shadow-lg transition ring-2 ring-amber-300/50 dark:ring-amber-500/50">
+                    <i class="fa-solid fa-graduation-cap text-4xl text-accent mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2 text-slate-800 dark:text-slate-100">Audit, Conseil & Formation IT</h3>
+                    <ul class="space-y-2 text-gray-600 dark:text-slate-400 text-sm list-disc pl-5">
+                        <li>Audit informatique pour les PME.</li>
+                        <li>Conseils informatiques stratégiques pour les PME.</li>
+                        <li>Accompagnement ponctuel sur projets IT spécifiques.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                 <a href="#contact" class="px-8 py-3 bg-accent hover:bg-amber-600 text-slate-900 font-semibold rounded-lg shadow-lg shadow-accent/30 transition transform hover:-translate-y-1">
+                    Demander une consultation
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section --><section id="competences" class="py-20 bg-white dark:bg-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <!-- CORRECTION: Utilisation de text-slate-800 pour garantir la lisibilité en Light Mode --><h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">Compétences Techniques</h2>
+                <div class="w-20 h-1 bg-primary mx-auto rounded"></div>
+                <p class="mt-4 text-gray-600 dark:text-slate-400">Mon stack technique actuel et mes outils de prédilection.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- 1. Networking -->
+                <!-- MISE À JOUR BORDURES/CONTOUR --><div class="rounded-3xl card-bg border-2 border-gray-200 dark:border-slate-700 shadow-md hover:shadow-lg transition ring-2 ring-blue-300/50 dark:ring-blue-500/50">
+                    <!-- En-tête (Couleur 1) et Séparation Verticale -->
+                    <!-- CORRECTION DE L'ARRONDI EN HAUT --><div class="p-6 bg-blue-100 dark:bg-blue-950 border-b border-blue-200 dark:border-blue-700 rounded-t-3xl">
+                        <div class="w-12 h-12 bg-blue-200 dark:bg-blue-800 rounded-lg flex items-center justify-center mb-4 text-blue-800 dark:text-blue-200">
+                            <i class="fa-solid fa-server text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100">Réseaux & Architecture Avancée</h3>
+                    </div>
+                    <!-- Corps (Couleur 2) --><div class="p-6">
+                        <ul class="space-y-3 text-gray-600 dark:text-slate-400">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> Routage (OSPF, EIGRP, RIP)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> MPLS & VPN Layer 3</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> BGP (Confédération, Multi-AS)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> VoIP d'Entreprise (Cisco CME)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> SD-WAN (Architecture Overlay)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> Cisco IOS & Juniper Junos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 2. Security & Tools -->
+                <!-- MISE À JOUR BORDURES/CONTOUR --><div class="rounded-3xl card-bg border-2 border-gray-200 dark:border-slate-700 shadow-md hover:shadow-lg transition ring-2 ring-red-300/50 dark:ring-red-500/50">
+                    <!-- En-tête (Couleur 1) et Séparation Verticale -->
+                    <!-- CORRECTION DE L'ARRONDI EN HAUT --><div class="p-6 bg-red-100 dark:bg-red-950 border-b border-red-200 dark:border-red-700 rounded-t-3xl">
+                        <div class="w-12 h-12 bg-red-200 dark:bg-red-800 rounded-lg flex items-center justify-center mb-4 text-red-800 dark:text-red-200">
+                            <i class="fa-solid fa-shield-halved text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100">Sécurité & Supervision</h3>
+                    </div>
+                    <!-- Corps (Couleur 2) --><div class="p-6">
+                        <ul class="space-y-3 text-gray-600 dark:text-slate-400">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> Firewalls (PFSense, Fortinet)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> IDS/IPS (Snort, Suricata)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> VPN (OpenVPN, IPsec)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> Analyse de paquets (Wireshark)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> Supervision (Nagios, Zabbix)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> Gestion des logs (Syslog)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 3. Development, Scripting & Systèmes -->
+                <!-- MISE À JOUR BORDURES/CONTOUR --><div class="rounded-3xl card-bg border-2 border-gray-200 dark:border-slate-700 shadow-md hover:shadow-lg transition ring-2 ring-purple-300/50 dark:ring-purple-500/50">
+                    <!-- En-tête (Couleur 1) et Séparation Verticale -->
+                    <!-- CORRECTION DE L'ARRONDI EN HAUT --><div class="p-6 bg-purple-100 dark:bg-purple-950 border-b border-purple-200 dark:border-purple-700 rounded-t-3xl">
+                        <div class="w-12 h-12 bg-purple-200 dark:bg-purple-800 rounded-lg flex items-center justify-center mb-4 text-purple-800 dark:text-purple-200">
+                            <i class="fa-solid fa-code text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100">Développement, Scripting & Systèmes</h3>
+                    </div>
+                    <!-- Corps (Couleur 2) --><div class="p-6">
+                        <ul class="space-y-3 text-gray-600 dark:text-slate-400">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> Scripting (Python, Bash)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> Front-End (HTML, CSS, JavaScript)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> Back-End Basique (PHP)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> Formatage (XML, YAML, JSON)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> Linux (Debian, RedHat)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> Virtualisation (VMware) / Docker</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500 text-sm"></i> Windows Server / Active Directory</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section --><section id="projets" class="py-20 bg-slate-50 dark:bg-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">Projets Réalisés</h2>
+                <div class="w-20 h-1 bg-primary mx-auto rounded"></div>
+                <p class="mt-4 text-gray-600 dark:text-slate-400">Une sélection de travaux académiques et personnels.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <!-- Project 1 (MPLS - CORE) --><div id="project-mpls" class="card-bg rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300 flex flex-col h-full border border-gray-100 dark:border-slate-700">
+                    <div class="h-40 bg-slate-800 dark:bg-slate-900 flex items-center justify-center relative overflow-hidden group">
+                        <i class="fa-solid fa-route text-5xl text-slate-600 group-hover:text-primary transition duration-500"></i>
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                            <span class="text-white font-semibold border border-white px-4 py-2 rounded">Voir détail</span>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="px-2 py-1 bg-primary text-white text-xs font-semibold rounded-full">MPLS</span>
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 text-xs font-semibold rounded-full">ISP</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">Déploiement Backbone MPLS (VPN L3)</h3>
+                        <p id="mpls-description" class="text-gray-600 dark:text-slate-400 text-sm mb-3 flex-1">
+                            Simulation complète d'une infrastructure fournisseur de services. Mise en œuvre des VPN Layer 3 pour isoler le trafic client.
+                        </p>
+                        
+                        <!-- NOUVELLE FONCTIONNALITÉ GEMINI API --><div class="mt-auto pt-3 border-t border-slate-100 dark:border-slate-700">
+                            <button onclick="generateExecutiveSummary('mpls')" 
+                                class="w-full text-center px-3 py-2 bg-primary hover:bg-sky-600 text-white font-semibold rounded-lg text-xs transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-sparkles"></i> Comprendre le projet
+                            </button>
+                            <!-- Zone d'affichage du résumé généré --><div id="mpls-summary" class="text-xs text-gray-700 dark:text-slate-300 mt-2 p-2 bg-slate-100 dark:bg-slate-700 rounded hidden"></div>
+                            <!-- Indicateur de chargement --><div id="mpls-loading" class="text-xs text-primary mt-2 hidden text-center">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Génération en cours...
+                            </div>
+                        </div>
+
+                        <!-- LIEN MIS À JOUR: Pointe vers GitHub -->
+                        <a href="https://github.com/Nelson2410" target="_blank" class="text-primary hover:text-sky-700 font-medium text-xs flex items-center gap-1 mt-2">
+                            En savoir plus <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project 2 (VOIP) --><div id="project-voip" class="card-bg rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300 flex flex-col h-full border border-gray-100 dark:border-slate-700">
+                    <div class="h-40 bg-slate-800 dark:bg-slate-900 flex items-center justify-center relative overflow-hidden group">
+                        <i class="fa-solid fa-phone-volume text-5xl text-slate-600 group-hover:text-green-500 transition duration-500"></i>
+                         <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                            <span class="text-white font-semibold border border-white px-4 py-2 rounded">Voir détail</span>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 text-xs font-semibold rounded-full">VoIP</span>
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 text-xs font-semibold rounded-full">Cisco CME</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">Système de Téléphonie IP Multi-Site</h3>
+                        <p id="voip-description" class="text-gray-600 dark:text-slate-400 text-sm mb-3 flex-1">
+                            Déploiement d'une solution de téléphonie unifiée sur routeurs Cisco (CME) avec interconnexion SIP/H.323.
+                        </p>
+                        
+                        <!-- NOUVELLE FONCTIONNALITÉ GEMINI API --><div class="mt-auto pt-3 border-t border-slate-100 dark:border-slate-700">
+                            <button onclick="generateExecutiveSummary('voip')" 
+                                class="w-full text-center px-3 py-2 bg-primary hover:bg-sky-600 text-white font-semibold rounded-lg text-xs transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-sparkles"></i> Comprendre le projet
+                            </button>
+                            <!-- Zone d'affichage du résumé généré --><div id="voip-summary" class="text-xs text-gray-700 dark:text-slate-300 mt-2 p-2 bg-slate-100 dark:bg-slate-700 rounded hidden"></div>
+                            <!-- Indicateur de chargement --><div id="voip-loading" class="text-xs text-primary mt-2 hidden text-center">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Génération en cours...
+                            </div>
+                        </div>
+
+                        <!-- LIEN MIS À JOUR: Pointe vers GitHub -->
+                        <a href="https://github.com/Nelson2410" target="_blank" class="text-primary hover:text-sky-700 font-medium text-xs flex items-center gap-1 mt-2">
+                            En savoir plus <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project 3 (SD-WAN & IDS/IPS) - Intégration Gemini --><div id="project-sdwan" class="card-bg rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300 flex flex-col h-full border border-gray-100 dark:border-slate-700">
+                    <div class="h-40 bg-slate-800 dark:bg-slate-900 flex items-center justify-center relative overflow-hidden group">
+                        <i class="fa-solid fa-bolt text-5xl text-slate-600 group-hover:text-amber-500 transition duration-500"></i>
+                         <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                            <span class="text-white font-semibold border border-white px-4 py-2 rounded">Voir détail</span>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="px-2 py-1 bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300 text-xs font-semibold rounded-full">SD-WAN</span>
+                            <span class="px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300 text-xs font-semibold rounded-full">Sécurité</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">Intranet Multi-Site SD-WAN/IDS-IPS</h3>
+                        <p id="sdwan-description" class="text-gray-600 dark:text-slate-400 text-sm mb-3 flex-1">
+                            Architecture multi-sites avec SD-WAN et intégration de sécurité unifiée (IDS/IPS) pour défense périphérique.
+                        </p>
+                        
+                        <!-- NOUVELLE FONCTIONNALITÉ GEMINI API --><div class="mt-auto pt-3 border-t border-slate-100 dark:border-slate-700">
+                            <button onclick="generateExecutiveSummary('sdwan')" 
+                                class="w-full text-center px-3 py-2 bg-primary hover:bg-sky-600 text-white font-semibold rounded-lg text-xs transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-sparkles"></i> Comprendre le projet
+                            </button>
+                            <!-- Zone d'affichage du résumé généré --><div id="sdwan-summary" class="text-xs text-gray-700 dark:text-slate-300 mt-2 p-2 bg-slate-100 dark:bg-slate-700 rounded hidden"></div>
+                            <!-- Indicateur de chargement --><div id="sdwan-loading" class="text-xs text-primary mt-2 hidden text-center">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Génération en cours...
+                            </div>
+                        </div>
+
+                        <!-- LIEN MIS À JOUR: Pointe vers GitHub -->
+                        <a href="https://github.com/Nelson2410" target="_blank" class="text-primary hover:text-sky-700 font-medium text-xs flex items-center gap-1 mt-2">
+                            En savoir plus <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project 4 (NOUVEAU - WEB DEV) --><div id="project-webdev" class="card-bg rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300 flex flex-col h-full border border-gray-100 dark:border-slate-700">
+                    <div class="h-40 bg-slate-800 dark:bg-slate-900 flex items-center justify-center relative overflow-hidden group">
+                        <i class="fa-solid fa-laptop-code text-5xl text-slate-600 group-hover:text-purple-500 transition duration-500"></i>
+                         <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                            <span class="text-white font-semibold border border-white px-4 py-2 rounded">Voir détail</span>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="px-2 py-1 bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 text-xs font-semibold rounded-full">Web</span>
+                            <span class="px-2 py-1 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 text-xs font-semibold rounded-full">PHP/JS</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">Portail Interne de Gestion Simple</h3>
+                        <p id="webdev-description" class="text-gray-600 dark:text-slate-400 text-sm mb-3 flex-1">
+                            Développement d'une application web interne (Front-End HTML/CSS/JS et Back-End PHP) pour une gestion basique de tickets ou d'inventaire léger.
+                        </p>
+                        
+                        <!-- NOUVELLE FONCTIONNALITÉ GEMINI API --><div class="mt-auto pt-3 border-t border-slate-100 dark:border-slate-700">
+                            <button onclick="generateExecutiveSummary('webdev')" 
+                                class="w-full text-center px-3 py-2 bg-primary hover:bg-sky-600 text-white font-semibold rounded-lg text-xs transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-sparkles"></i> Comprendre le projet
+                            </button>
+                            <!-- Zone d'affichage du résumé généré --><div id="webdev-summary" class="text-xs text-gray-700 dark:text-slate-300 mt-2 p-2 bg-slate-100 dark:bg-slate-700 rounded hidden"></div>
+                            <!-- Indicateur de chargement --><div id="webdev-loading" class="text-xs text-primary mt-2 hidden text-center">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Génération en cours...
+                            </div>
+                        </div>
+
+                        <!-- LIEN MIS À JOUR: Pointe vers GitHub -->
+                        <a href="https://github.com/Nelson2410" target="_blank" class="text-primary hover:text-sky-700 font-medium text-xs flex items-center gap-1 mt-2">
+                            Voir le projet <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline / Parcours (Adaptation Dark Mode) --><section id="parcours" class="py-20 bg-white dark:bg-slate-900">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">Mon Parcours</h2>
+                <div class="w-20 h-1 bg-primary mx-auto rounded"></div>
+            </div>
+
+            <div class="relative border-l-4 border-primary dark:border-sky-600 ml-3 space-y-12">
+                <!-- Item 1 (Licence / Master) - MISE À JOUR ICI --><div class="relative pl-8 sm:pl-12 group">
+                    <div class="absolute -left-3 top-0 w-6 h-6 bg-primary rounded-full border-4 border-white dark:border-slate-900 shadow"></div>
+                    <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-2">
+                        <!-- MISE À JOUR DES CLASSES ET DE LA MISE EN PAGE --><h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex flex-col sm:flex-row sm:items-baseline sm:gap-2">
+                            <span>Licence/Master (Bac +5)</span>
+                            <span class="text-lg font-semibold text-primary/80 dark:text-sky-300/80">Réseaux et Télécoms</span>
+                        </h3>
+                        <span class="text-sm font-semibold text-primary bg-sky-50 dark:bg-sky-900 dark:text-sky-300 px-3 py-1 rounded-full">En cours (Fin de cycle)</span>
+                    </div>
+                    <!-- MISE À JOUR DE L'ÉTABLISSEMENT --><div class="text-gray-500 dark:text-slate-400 text-sm mb-2">École Supérieure • 2021 - Présent</div>
+                    <p class="text-gray-600 dark:text-slate-400">
+                        Spécialisation en administration systèmes et sécurité des réseaux. Projet de fin d'études sur la migration vers le Cloud Hybride.
+                    </p>
+                </div>
+
+                <!-- Item 2 (Stage) --><div class="relative pl-8 sm:pl-12 group">
+                    <div class="absolute -left-3 top-0 w-6 h-6 bg-slate-300 dark:bg-slate-600 rounded-full border-4 border-white dark:border-slate-900 shadow"></div>
+                    <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-2">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100">Stage Assistant Admin Réseau</h3>
+                        <span class="text-sm font-semibold text-gray-500 dark:text-slate-400">2024 (4 mois)</span>
+                    </div>
+                    <div class="text-gray-500 dark:text-slate-400 text-sm mb-2">Entreprise Tech Solutions • Abidjan</div>
+                    <p class="text-gray-600 dark:text-slate-400">
+                        Travail en étroite collaboration avec l'équipe IT pour la maintenance et l'évolution des infrastructures. Missions principales : support utilisateur niveau 2, configuration des switchs d'accès et supervision des équipements critiques.
+                    </p>
+                </div>
+
+                <!-- Item 3 (Certifications) --><div class="relative pl-8 sm:pl-12 group">
+                    <div class="absolute -left-3 top-0 w-6 h-6 bg-slate-300 dark:bg-slate-600 rounded-full border-4 border-white dark:border-slate-900 shadow"></div>
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1">Préparation Certifications</h3>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <span class="px-3 py-1 border border-gray-300 dark:border-slate-600 rounded text-sm text-gray-600 dark:text-slate-300 font-medium">CCNA 200-301</span>
+                        <span class="px-3 py-1 border border-gray-300 dark:border-slate-600 rounded text-sm text-gray-600 dark:text-slate-300 font-medium">CompTIA Security+</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Contact (Section modifiée pour la carte Téléphone) --><section id="contact" class="py-20 bg-slate-900 text-white">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-6">Prêt à collaborer ?</h2>
+            <!-- MISE À JOUR : Texte d'opportunités avec CDI et Accompagnement Périodique et lien vers la section Services -->
+            <p class="text-slate-400 mb-8 text-lg">
+                Je suis ouvert aux opportunités de Stage, CDD ou CDI. Vous avez également besoin d'expertise ponctuelle ? <br>
+                Découvrez mes <a href="#services" class="text-primary hover:text-sky-400 font-semibold underline">services d'accompagnement périodique</a> et discutons de vos besoins en infrastructure.
+            </p>
+            
+            <!-- GRILLE MISE À JOUR : grid-cols-2 sur mobile, grid-cols-4 sur desktop --><div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                
+                <!-- CARTE TÉLÉPHONE --><a href="tel:+2250711459201" class="flex flex-col items-center p-6 bg-slate-800 rounded-xl hover:bg-slate-700 transition border border-slate-700">
+                    <i class="fa-solid fa-phone text-3xl text-primary mb-3"></i>
+                    <span class="font-medium">Téléphone</span>
+                    <!-- CORRECTION : Ajout de whitespace-nowrap pour éviter le saut de ligne -->
+                    <span class="text-sm text-slate-400 mt-1 whitespace-nowrap">+225 07 11 45 92 01</span>
+                </a>
+                
+                <!-- CARTE EMAIL (Lien mis à jour, texte masqué) --><a href="mailto:nelson.bandos@proton.me" class="flex flex-col items-center p-6 bg-slate-800 rounded-xl hover:bg-slate-700 transition border border-slate-700">
+                    <i class="fa-solid fa-envelope text-3xl text-primary mb-3"></i>
+                    <span class="font-medium">Email</span>
+                    <span class="text-sm text-slate-400 mt-1">Cliquez pour écrire</span>
+                </a>
+                
+                <!-- CARTE LINKEDIN (Lien mis à jour) --><a href="https://www.linkedin.com/in/nelson-bandos" target="_blank" class="flex flex-col items-center p-6 bg-slate-800 rounded-xl hover:bg-slate-700 transition border border-slate-700">
+                    <i class="fa-brands fa-linkedin text-3xl text-primary mb-3"></i>
+                    <span class="font-medium">LinkedIn</span>
+                    <span class="text-sm text-slate-400 mt-1">Accéder au profil</span>
+                </a>
+                
+                <!-- CARTE GITHUB (Lien mis à jour, texte masqué) --><a href="https://github.com/Nelson2410" target="_blank" class="flex flex-col items-center p-6 bg-slate-800 rounded-xl hover:bg-slate-700 transition border border-slate-700">
+                    <i class="fa-brands fa-github text-3xl text-primary mb-3"></i>
+                    <span class="font-medium">GitHub</span>
+                    <span class="text-sm text-slate-400 mt-1">Voir le profil</span>
+                </a>
+            </div>
+
+            <div class="border-t border-slate-800 pt-8 text-slate-500 text-sm">
+                &copy; 2025 Nelson Bandos. Tous droits réservés.
+            </div>
+        </div>
+    </section>
+
+    <!-- Script pour le menu mobile et le mode sombre --><script>
+        // --- Fonctionnalité du menu mobile ---
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+        
+        // Fermer le menu lors du clic sur un lien
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // --- Fonctionnalité Dark Mode ---
+        const htmlElement = document.documentElement;
+        const toggleButtons = document.querySelectorAll('#theme-toggle, #theme-toggle-mobile');
+        const iconElements = document.querySelectorAll('#theme-icon, #theme-icon-mobile');
+
+        // Fonction pour mettre à jour l'icône
+        function updateIcon(isDarkMode) {
+            iconElements.forEach(icon => {
+                if (isDarkMode) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            });
+        }
+
+        // 1. Définir le thème initial au chargement
+        const initialTheme = localStorage.getItem('theme');
+        if (initialTheme === 'dark' || (!initialTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlElement.classList.add('dark');
+            updateIcon(true);
+        } else {
+            updateIcon(false);
+        }
+
+        // 2. Gestion du clic sur le bouton de bascule
+        function toggleTheme() {
+            if (htmlElement.classList.contains('dark')) {
+                // Passage en Light Mode
+                htmlElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                updateIcon(false);
+            } else {
+                // Passage en Dark Mode
+                htmlElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                updateIcon(true);
+            }
+        }
+        
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', toggleTheme);
+        });
+
+        // --- LOGIQUE DÉFILEMENT SUPPRIMÉE pour rendre la navigation IM-MU-ABLE ---
+        // (Les liens restent en Vert Citron/Gris Clair dans les deux modes)
+        
+        // --- DÉBUT INTÉGRATION GEMINI API ---
+
+        const API_KEY = ""; // Laissez la clé vide. Elle sera fournie par l'environnement Canvas.
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+
+        // Fonction d'aide pour l'appel API avec Backoff (gestion des erreurs)
+        async function fetchWithBackoff(url, options, retries = 3, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) {
+                        return response;
+                    }
+                } catch (error) {
+                    // Les erreurs réseau ou les problèmes de CORS seront ici
+                    console.error(`Attempt ${i + 1} failed (Network/CORS):`, error);
+                    if (i < retries - 1) {
+                        await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+                    } else {
+                        throw new Error("Failed to fetch content after multiple retries (Network Error).");
+                    }
+                }
+            }
+        }
+
+        // Fonction principale pour générer un résumé exécutif
+        async function generateExecutiveSummary(projectId) {
+            // Utiliser le même ID pour la description (ex: mpls-description) et le conteneur du projet (ex: project-mpls)
+            const descriptionElement = document.getElementById(`${projectId}-description`);
+            const summaryElement = document.getElementById(`${projectId}-summary`);
+            const loadingElement = document.getElementById(`${projectId}-loading`);
+
+            // Récupérer le contenu du projet
+            const projectTitle = document.querySelector(`#project-${projectId} h3`).textContent;
+            const projectDescription = descriptionElement.textContent.trim();
+
+            // 1. Afficher l'état de chargement
+            summaryElement.classList.add('hidden');
+            loadingElement.classList.remove('hidden');
+
+            // Mise à jour de l'instruction système pour être plus générique et adapté à différents projets
+            const systemPrompt = "Agis comme un consultant IT senior. Ton objectif est d'analyser le projet technique fourni et de fournir un paragraphe concis qui explique son objectif, les compétences démontrées (sans utiliser de jargon excessif) et sa valeur pour une entreprise. Réponds uniquement en français.";
+            const userQuery = `Analysez et expliquez le projet : ${projectTitle}. Description technique : "${projectDescription}"`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            const options = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            };
+
+            try {
+                const response = await fetchWithBackoff(API_URL, options);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`API returned status ${response.status}: ${errorText}`);
+                }
+                
+                const result = await response.json();
+                
+                // 2. Extraire le texte généré
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Erreur : Impossible de générer le résumé. Veuillez réessayer.";
+
+                // 3. Afficher le résultat
+                summaryElement.innerHTML = `<span class="font-bold">Explication du projet :</span> ${text}`;
+                summaryElement.classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                summaryElement.textContent = "Erreur : La connexion à l'API de Gemini a échoué. Veuillez vérifier la console pour les détails.";
+                summaryElement.classList.remove('hidden');
+            } finally {
+                // Masquer le chargement
+                loadingElement.classList.add('hidden');
+            }
+        }
+        // --- FIN INTÉGRATION GEMINI API ---
+    </script>
+</body>
+</html>
