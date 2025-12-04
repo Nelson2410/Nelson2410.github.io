@@ -618,7 +618,11 @@
 // --- DÉBUT INTÉGRATION GEMINI API ---
 
 // Utilise le proxy backend sécurisé, aucune clé API côté client !
-const API_URL = "/api/gemini";
+// En développement local : http://localhost:3000/api/gemini
+// En production : https://votre-domaine.herokuapp.com/api/gemini (ou autre plateforme)
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000/api/gemini'
+    : 'https://nelson-portfolio-api.onrender.com/api/gemini'; // À adapter avec votre URL de déploiement
 
 // Appel avec logique retry légère
 async function fetchWithBackoff(url, options, retries = 3, delay = 1000) {
