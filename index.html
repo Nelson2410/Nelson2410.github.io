@@ -615,34 +615,22 @@
             button.addEventListener('click', toggleTheme);
         });
         
-        // --- DÉBUT INTÉGRATION GEMINI API ---
+// --- DÉBUT INTÉGRATION GEMINI API ---
 
-// ---------------- SECURITE CLE GEMINI --------------------
-// La clé API Gemini NE DOIT JAMAIS être présente dans ce code JS/HTML.
-// Le front-end doit APPELER UN ENDPOINT SECURISE sur votre serveur (proxy),
-// celui-ci détient la vraie clé et appelle l’API Gemini de Google si besoin.
-//
-// Ici, on suppose que POST /api/gemini est configuré côté serveur.
-//
-// Si vous n’avez pas mis de backend, cet appel RENVOIS UNE ERREUR !
-//
-// Ex : (à placer/adapter au bon endroit JS)
-const API_URL = "/api/gemini"; // Évite de mettre la clé dans le front !
+// Utilise le proxy backend sécurisé, aucune clé API côté client !
+const API_URL = "/api/gemini";
 
+// Appel avec logique retry légère
 async function fetchWithBackoff(url, options, retries = 3, delay = 1000) {
     for (let i = 0; i < retries; i++) {
         try {
             const response = await fetch(url, options);
-            if (response.ok) {
-                return response;
-            }
+            if (response.ok) return response;
         } catch (error) {
-            console.error(`Attempt ${i + 1} failed (Network/CORS):`, error);
-            if (i < retries - 1) {
-                await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
-            } else {
-                throw new Error("Failed to fetch content after multiple retries (Network Error).");
-            }
+            if (i < retries - 1)
+                await new Promise(resolve => setTimeout(resolve, delay * (2 ** i)));
+            else
+                throw new Error("Echec réseau après plusieurs tentatives.");
         }
     }
 }
@@ -678,28 +666,28 @@ async function generateExecutiveSummary(projectId) {
         const response = await fetchWithBackoff(API_URL, options);
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`API returned status ${response.status}: ${errorText}`);
+            throw new Error(`Problème API Gemini: ${response.status}: ${errorText}`);
         }
         const result = await response.json();
-        const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Erreur : Impossible de générer le résumé. Veuillez réessayer.";
+        const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Erreur : Impossible de générer le résumé.";
 
         summaryElement.innerHTML = `<span class="font-bold">Explication du projet :</span> ${text}`;
         summaryElement.classList.remove('hidden');
 
     } catch (error) {
-        console.error("Gemini API Error:", error);
-        summaryElement.textContent = "Erreur : La connexion à l'API de Gemini a échoué. Veuillez vérifier la console pour les détails.";
+        summaryElement.textContent = "Erreur : La connexion à l'API Gemini a échoué.";
         summaryElement.classList.remove('hidden');
     } finally {
         loadingElement.classList.add('hidden');
     }
 }
-// ---------------- FIN SECURITE CLE GEMINI --------------------
         // --- FIN INTÉGRATION GEMINI API ---
+        
     </script>
 </body>
 
 </html>
+
 
 
 
