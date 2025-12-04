@@ -614,97 +614,92 @@
         toggleButtons.forEach(button => {
             button.addEventListener('click', toggleTheme);
         });
-
-        // --- LOGIQUE DÉFILEMENT SUPPRIMÉE pour rendre la navigation IM-MU-ABLE ---
-        // (Les liens restent en Vert Citron/Gris Clair dans les deux modes)
         
         // --- DÉBUT INTÉGRATION GEMINI API ---
 
-        const API_KEY = "AIzaSyCU_8JU3GLgjY_HPzmnc86yjcbKCPTP3Uo"; // Laissez la clé vide. Elle sera fournie par l'environnement Canvas.
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${API_KEY}`;
+// ---------------- SECURITE CLE GEMINI --------------------
+// La clé API Gemini NE DOIT JAMAIS être présente dans ce code JS/HTML.
+// Le front-end doit APPELER UN ENDPOINT SECURISE sur votre serveur (proxy),
+// celui-ci détient la vraie clé et appelle l’API Gemini de Google si besoin.
+//
+// Ici, on suppose que POST /api/gemini est configuré côté serveur.
+//
+// Si vous n’avez pas mis de backend, cet appel RENVOIS UNE ERREUR !
+//
+// Ex : (à placer/adapter au bon endroit JS)
+const API_URL = "/api/gemini"; // Évite de mettre la clé dans le front !
 
-        // Fonction d'aide pour l'appel API avec Backoff (gestion des erreurs)
-        async function fetchWithBackoff(url, options, retries = 3, delay = 1000) {
-            for (let i = 0; i < retries; i++) {
-                try {
-                    const response = await fetch(url, options);
-                    if (response.ok) {
-                        return response;
-                    }
-                } catch (error) {
-                    // Les erreurs réseau ou les problèmes de CORS seront ici
-                    console.error(`Attempt ${i + 1} failed (Network/CORS):`, error);
-                    if (i < retries - 1) {
-                        await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
-                    } else {
-                        throw new Error("Failed to fetch content after multiple retries (Network Error).");
-                    }
-                }
+async function fetchWithBackoff(url, options, retries = 3, delay = 1000) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const response = await fetch(url, options);
+            if (response.ok) {
+                return response;
+            }
+        } catch (error) {
+            console.error(`Attempt ${i + 1} failed (Network/CORS):`, error);
+            if (i < retries - 1) {
+                await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+            } else {
+                throw new Error("Failed to fetch content after multiple retries (Network Error).");
             }
         }
+    }
+}
 
-        // Fonction principale pour générer un résumé exécutif
-        async function generateExecutiveSummary(projectId) {
-            // Utiliser le même ID pour la description (ex: mpls-description) et le conteneur du projet (ex: project-mpls)
-            const descriptionElement = document.getElementById(`${projectId}-description`);
-            const summaryElement = document.getElementById(`${projectId}-summary`);
-            const loadingElement = document.getElementById(`${projectId}-loading`);
+async function generateExecutiveSummary(projectId) {
+    const descriptionElement = document.getElementById(`${projectId}-description`);
+    const summaryElement = document.getElementById(`${projectId}-summary`);
+    const loadingElement = document.getElementById(`${projectId}-loading`);
 
-            // Récupérer le contenu du projet
-            const projectTitle = document.querySelector(`#project-${projectId} h3`).textContent;
-            const projectDescription = descriptionElement.textContent.trim();
+    const projectTitle = document.querySelector(`#project-${projectId} h3`).textContent;
+    const projectDescription = descriptionElement.textContent.trim();
 
-            // 1. Afficher l'état de chargement
-            summaryElement.classList.add('hidden');
-            loadingElement.classList.remove('hidden');
+    summaryElement.classList.add('hidden');
+    loadingElement.classList.remove('hidden');
 
-            // Mise à jour de l'instruction système pour être plus générique et adapté à différents projets
-            const systemPrompt = "Agis comme un consultant IT senior. Ton objectif est d'analyser le projet technique fourni et de fournir un paragraphe concis qui explique son objectif, les compétences démontrées (sans utiliser de jargon excessif) et sa valeur pour une entreprise. Réponds uniquement en français.";
-            const userQuery = `Analysez et expliquez le projet : ${projectTitle}. Description technique : "${projectDescription}"`;
+    const systemPrompt = "Agis comme un consultant IT senior. Ton objectif est d'analyser le projet technique fourni et de fournir un paragraphe concis qui explique son objectif, les compétences mises en jeu et la valeur ajoutée, dans un langage accessible à un décideur non technique.";
+    const userQuery = `Analysez et expliquez le projet : ${projectTitle}. Description technique : "${projectDescription}"`;
 
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                },
-            };
+    const payload = {
+        contents: [{ parts: [{ text: userQuery }] }],
+        systemInstruction: {
+            parts: [{ text: systemPrompt }]
+        },
+    };
 
-            const options = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            };
+    const options = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    };
 
-            try {
-                const response = await fetchWithBackoff(API_URL, options);
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`API returned status ${response.status}: ${errorText}`);
-                }
-                
-                const result = await response.json();
-                
-                // 2. Extraire le texte généré
-                const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Erreur : Impossible de générer le résumé. Veuillez réessayer.";
-
-                // 3. Afficher le résultat
-                summaryElement.innerHTML = `<span class="font-bold">Explication du projet :</span> ${text}`;
-                summaryElement.classList.remove('hidden');
-
-            } catch (error) {
-                console.error("Gemini API Error:", error);
-                summaryElement.textContent = "Erreur : La connexion à l'API de Gemini a échoué. Veuillez vérifier la console pour les détails.";
-                summaryElement.classList.remove('hidden');
-            } finally {
-                // Masquer le chargement
-                loadingElement.classList.add('hidden');
-            }
+    try {
+        const response = await fetchWithBackoff(API_URL, options);
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`API returned status ${response.status}: ${errorText}`);
         }
+        const result = await response.json();
+        const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Erreur : Impossible de générer le résumé. Veuillez réessayer.";
+
+        summaryElement.innerHTML = `<span class="font-bold">Explication du projet :</span> ${text}`;
+        summaryElement.classList.remove('hidden');
+
+    } catch (error) {
+        console.error("Gemini API Error:", error);
+        summaryElement.textContent = "Erreur : La connexion à l'API de Gemini a échoué. Veuillez vérifier la console pour les détails.";
+        summaryElement.classList.remove('hidden');
+    } finally {
+        loadingElement.classList.add('hidden');
+    }
+}
+// ---------------- FIN SECURITE CLE GEMINI --------------------
         // --- FIN INTÉGRATION GEMINI API ---
     </script>
 </body>
 
 </html>
+
 
 
